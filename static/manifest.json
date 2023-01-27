@@ -1,0 +1,17 @@
+{
+    "short_name": "Market Net",
+    "name": "Market Net",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "favicon.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#ffffff",
+    "description": "A shared shopping list"
+}
