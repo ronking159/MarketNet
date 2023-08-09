@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Socket } from "socket.io-client"
-
+    import Item from './Item.svelte'
 
     type Section = {
         name: String,
@@ -33,10 +33,91 @@
             itemColor = '#dd7'
             break
     }
+
+    let lastClick: number = 0
+
+    function handleClick() {
+        const now = Date.now()
+
+        if (now - lastClick <= 200) {
+            let inp
+            let valid = false
+            let first = true
+            while (!valid) {
+                if (first)
+                    inp = prompt('שם הסעיף')
+                else
+                    inp = prompt('שם הסעיף תפוס')
+                if (inp == null) return
+
+                let cont = false
+                for (let i = 0; i < sections.length; i++) {
+                    if (sections[i].name == inp) cont = true
+                }
+                if (!cont) valid = true
+
+                first = false
+            }
+
+            // @ts-ignore
+            sections = sections.map(sec => {
+                if (sec.name == section.name) {
+                    sec.name = inp!
+                }
+
+                return sec
+            })
+
+            socket.emit('update', sections)
+        }
+
+        lastClick = now
+    }
+
+    function deleteItem(item: string) {
+        section.items = section.items.filter(_item => {
+            return _item != item
+        })
+
+        socket.emit('update', sections)
+    }
+
+    function editItem(item: string) {
+            let inp
+            let valid = false
+            let first = true
+            while (!valid) {
+                if (first)
+                    inp = prompt('שם המוצר')
+                else
+                    inp = prompt('שם המוצר תפוס')
+                if (inp == null) return
+
+                let cont = false
+                for (let i = 0; i < section.items.length; i++) {
+                    if (section.items[i] == inp) cont = true
+                }
+                if (!cont) valid = true
+
+                first = false
+            }
+            
+            // @ts-ignore
+            section.items = section.items.map((it: string) => {
+                if (item == it) {
+                    it = inp!
+                }
+
+                return it
+            })
+
+            socket.emit('update', sections)
+        }
 </script>
 
 <div class="section">
-    <div class="controlls" style={`background-color: ${secColor};`}>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="controlls" style={`background-color: ${secColor};`} on:click={handleClick}>
         <h1>{section.name}</h1>
         <button on:click={() => {
             let inp
@@ -77,34 +158,11 @@
         }}>❌</button>
     </div>
     {#each section.items as item}
-        <div class="item" style={`background-color: ${itemColor};`}>
-            <h2>{item}</h2>
-            <button on:click={() => {
-                section.items = section.items.filter(_item => {
-                    return _item != item
-                })
-
-                socket.emit('update', sections)
-            }}>❌</button>
-        </div>
+        <Item del={() => deleteItem(item)} edit={() => editItem(item)} color={itemColor} name={item} />
     {/each}
 </div>
 
 <style>
-    .item {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: row;
-    }
-
-    .item > h2 {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: calc(100% - 2em);
-    }
-
     button {
         padding: 1rem;
     }
