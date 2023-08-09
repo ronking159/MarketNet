@@ -2,8 +2,9 @@
 	import type { Socket } from "socket.io-client"
 
     import { io } from 'socket.io-client'
-	import AddSection from "./AddSection.svelte";
-	import Section from "./Section.svelte";
+	import AddSection from "./AddSection.svelte"
+	import Section from "./Section.svelte"
+	import Base from "./Base.svelte"
     const socket: Socket = io()
 
     type Section = {
@@ -23,6 +24,7 @@
 <div class="wrapper">
     <div class="controlls">
         <AddSection {socket} {sections} />
+        <Base {socket} />
     </div>
     <div>
         {#each sections as section, i}
@@ -55,6 +57,10 @@
         html, body {
             margin: 0;
             height: 100%;
+        }
+
+        p, span, h1, h2, h3, h4, h5, h6 {
+            direction: rtl;
         }
     </style>
 </svelte:head>
