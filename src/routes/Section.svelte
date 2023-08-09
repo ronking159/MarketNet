@@ -88,9 +88,9 @@
             let first = true
             while (!valid) {
                 if (first)
-                    inp = prompt('שם המוצר')
+                    inp = prompt('שם המוצר', item)
                 else
-                    inp = prompt('שם המוצר תפוס')
+                    inp = prompt('שם המוצר תפוס', item)
                 if (inp == null) return
 
                 let cont = false
